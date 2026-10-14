@@ -15,4 +15,4 @@ A polished browser remake of the 1985 MicroProse air traffic control classic, st
 - Orange planes are landing: bring them down to 1 and fly them along a runway.
 - White and blue planes pass through: send them out of their DEST city at 5 (light aircraft at 3).
 - Planes at the same height must never get close. Heavies need an extra square of room.
-- Click a plane or press its letter, then use the arrow keys (or click where you want it to go).
+- Click a plane or press its letter, then use the arrow keys or scroll wheel (or click where you want it to go).

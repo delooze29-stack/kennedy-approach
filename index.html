@@ -575,6 +575,17 @@ cv.addEventListener('pointerdown',e=>{
 });
 cv.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')G.hover=toWorld(e)});
 cv.addEventListener('pointerleave',()=>G.hover=null);
+// Scroll wheel over the map changes the selected plane's height: up = climb, down = descend.
+let wheelAcc=0,wheelT=0;
+cv.addEventListener('wheel',e=>{
+  if(G.demo||G.over||G.paused||!G.sel)return;
+  e.preventDefault();
+  const now=performance.now();
+  if(now-wheelT>400)wheelAcc=0;
+  wheelAcc+=e.deltaMode===1?e.deltaY*33:e.deltaY;
+  if(Math.abs(wheelAcc)<40||now-wheelT<140)return;
+  command(wheelAcc<0?'U':'D');wheelAcc=0;wheelT=now;
+},{passive:false});
 $('#fl').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b){const p=G.planes.find(q=>q.id===b.dataset.id);if(p)select(p)}});
 document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>command(b.dataset.a)));
 addEventListener('keydown',e=>{
@@ -610,7 +621,7 @@ function menu(){
     <li><b>Orange planes</b> are landing. Bring them down to <b>1</b> and fly them along a runway, either way.</li>
     <li><b>White</b> and <b>blue</b> planes are passing through. Send them out of their <b>DEST</b> city at <b>5</b> (light aircraft at <b>3</b>).</li>
     <li>Two planes at the <b>same height</b> must never get close. <b>Heavies</b> (the big four-engine jets) need an extra square of room. <b>Light</b> props are slow and fly low.</li>
-    <li>Click a plane or press its letter, then <span class="key">←</span><span class="key">→</span> turn, <span class="key">↑</span><span class="key">↓</span> height, or click where it should go. <span class="key">SPACE</span> pauses.</li>
+    <li>Click a plane or press its letter, then <span class="key">←</span><span class="key">→</span> turn, <span class="key">↑</span><span class="key">↓</span> or the <b>scroll wheel</b> for height, or click where it should go. <span class="key">SPACE</span> pauses.</li>
   </ul>
   <div class="row"><button class="go" id="go">START SHIFT</button><label class="chk"><input type="checkbox" id="vchk" ${voiceOn?'checked':''}> Pilot voices</label><label class="chk"><input type="checkbox" id="lchk" ${logOn?'checked':''}> Radio log</label></div>`;
   $('#card').onclick=e=>{
