@@ -2,6 +2,11 @@
 
 A polished browser remake of the 1985 MicroProse air traffic control classic, styled after the Atari grid version.
 
+**Game recreated by Mathew Doughty.**
+
+- Five airports to choose from: Atlanta, Denver, Dallas, Washington and New York, each with its own runway layout.
+- Easy, Normal and Hard difficulty, plus Slow, Normal and Fast game speed.
+
 **Play it:** https://delooze29-stack.github.io/kennedy-approach/
 
 - Orange planes are landing: bring them down to 1 and fly them along the ATL runway.
