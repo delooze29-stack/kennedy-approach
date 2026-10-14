@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap">
 <style>
-/* Layout: Atari-era console, polished. Purple flight board across the top, big blue dotted grid filling the screen, control bar along the bottom. Single deliberate look. */
+/* Layout: Atari-era console, polished. Purple flight board on top, big blue dotted grid (with optional radio log beside or below it), control bar along the bottom. Single deliberate look. */
 :root{
   --bg:#14102e; --hud:#6f55f2; --hud-dk:#4c37c9; --field:#3d78ee; --field-dk:#2a58c9;
-  --ink:#0c1036; --paper:#f4f1ff; --amber:#ffb13b; --gold:#ffe36b; --cyan:#9bf3ff; --red:#ff4d5e;
+  --ink:#0c1036; --paper:#f4f1ff; --amber:#ffb13b; --gold:#ffe36b; --cyan:#9bf3ff; --red:#ff4d5e; --term:#0b0a22;
   --f-pix:"Silkscreen","Courier New",monospace; --f-term:"VT323","Courier New",monospace;
   color-scheme:dark;
 }
@@ -29,28 +29,42 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .clock{background:#1d2a8a;border:2px solid #9aa9ff;color:var(--amber);font-family:var(--f-pix);font-weight:700;font-size:26px;letter-spacing:.06em;padding:4px 10px;font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(255,177,59,.5)}
 .where{font-family:var(--f-pix);font-size:11px;color:#e3ddff;letter-spacing:.04em}
 .fl{display:flex;gap:4px;overflow-x:auto;min-width:0;flex:1;align-items:stretch;scrollbar-width:thin}
-.fl .keys{display:grid;grid-template-rows:repeat(4,1fr);font-family:var(--f-pix);font-size:13px;color:var(--amber);text-align:right;padding-right:6px;line-height:1.35;flex:none}
-.col{display:grid;grid-template-rows:repeat(4,1fr);font-family:var(--f-pix);font-weight:700;font-size:15px;color:var(--ink);text-align:center;line-height:1.2;padding:0 7px;border:2px solid transparent;cursor:pointer;flex:none;min-width:48px;background:none}
+.fl .keys{display:grid;grid-template-rows:repeat(5,1fr);font-family:var(--f-pix);font-size:12px;color:var(--amber);text-align:right;padding-right:6px;line-height:1.3;flex:none}
+.col{display:grid;grid-template-rows:repeat(5,1fr);font-family:var(--f-pix);font-weight:700;font-size:14px;color:var(--ink);text-align:center;line-height:1.15;padding:0 7px;border:2px solid transparent;cursor:pointer;flex:none;min-width:48px;background:none}
 .col:hover{border-color:rgba(255,255,255,.4)}
 .col.sel{background:var(--paper);border-color:var(--gold)}
 .col.warn{color:var(--red)}
-.col .id{font-size:18px}
+.col .id{font-size:17px}
+.col .ty{font-size:11px;opacity:.75}
 .empty{font-family:var(--f-pix);font-size:13px;color:#d9d2ff;align-self:center}
 .score{display:flex;gap:16px;align-items:center;flex:none}
 .stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1}
 .stat b{font-family:var(--f-pix);font-weight:700;font-size:20px;color:var(--paper);font-variant-numeric:tabular-nums}
 .stat span{font-family:var(--f-pix);font-size:10px;color:#d9d2ff;letter-spacing:.08em;margin-top:4px}
-.pips{display:flex;gap:4px}
-.pips i{width:13px;height:13px;border:2px solid var(--paper);display:block}
+.pips{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;max-width:130px}
+.pips i{width:11px;height:11px;border:2px solid var(--paper);display:block}
 .pips i.on{background:var(--red);border-color:var(--red)}
 
-/* Field */
+/* Middle: map + radio log */
+.mid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-height:0;min-width:0}
+.mid.log-on{grid-template-columns:minmax(0,1fr) 300px}
 .wrap{min-height:0;min-width:0;display:flex;align-items:center;justify-content:center}
 #map{display:block;border:3px solid var(--hud-dk);box-shadow:0 0 0 3px #0b0820,0 18px 50px rgba(0,0,0,.5);cursor:crosshair;touch-action:manipulation;max-width:100%}
+.radio{display:none;flex-direction:column;min-height:0;background:var(--term);border:3px solid var(--hud-dk);box-shadow:0 0 0 3px #0b0820}
+.log-on .radio{display:flex}
+.radio h2{margin:0;padding:6px 10px;background:var(--hud-dk);font-family:var(--f-pix);font-size:12px;letter-spacing:.1em;display:flex;justify-content:space-between;font-weight:700}
+.radio h2 span{color:var(--amber)}
+#log{overflow-y:auto;padding:6px 10px;flex:1;min-height:0;font-size:19px;line-height:1.1}
+#log p{margin:0 0 5px;color:#cfc8ff}
+#log .t{color:#5f58a0;margin-right:6px}
+#log .w{color:var(--gold)}
+#log .atc .w{color:var(--cyan)}
+#log .sys{color:#8ff0b5}
+#log .bad{color:var(--red)}
 
 /* Controls */
 .bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
-.pad{display:flex;gap:6px}
+.pad{display:flex;gap:6px;flex-wrap:wrap}
 .k{background:var(--hud);border:0;box-shadow:0 4px 0 var(--hud-dk);font-family:var(--f-pix);font-weight:700;font-size:14px;padding:10px 14px;min-width:54px;color:var(--paper)}
 .k:active{transform:translateY(3px);box-shadow:0 1px 0 var(--hud-dk)}
 .k.alt{background:#2f8a5c;box-shadow:0 4px 0 #1d5c3c}
@@ -63,17 +77,21 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
 /* Overlay */
 .ov{position:fixed;inset:0;background:rgba(10,8,30,.7);display:flex;align-items:center;justify-content:center;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));z-index:5;overflow-y:auto}
-.card{background:var(--hud);border:4px solid var(--paper);box-shadow:0 8px 0 var(--hud-dk),0 30px 80px rgba(0,0,0,.6);max-width:780px;width:100%;padding:22px 24px;margin:auto}
+.card{background:var(--hud);border:4px solid var(--paper);box-shadow:0 8px 0 var(--hud-dk),0 30px 80px rgba(0,0,0,.6);max-width:800px;width:100%;padding:22px 24px;margin:auto}
 .card h1{font-family:var(--f-pix);font-weight:700;font-size:clamp(24px,5vw,40px);margin:0;color:var(--gold);text-shadow:3px 3px 0 var(--hud-dk);line-height:1.1;text-wrap:balance}
 .card .sub{font-family:var(--f-pix);font-size:12px;color:#e3ddff;margin:8px 0 4px;letter-spacing:.06em}
-.card .by{font-family:var(--f-pix);font-size:12px;color:var(--gold);margin:0 0 16px;letter-spacing:.06em}
+.card .by{font-family:var(--f-pix);font-size:12px;color:var(--gold);margin:0 0 12px;letter-spacing:.06em}
 .card h3{font-family:var(--f-pix);font-size:12px;color:var(--amber);letter-spacing:.1em;margin:14px 0 6px;font-weight:700}
+.tabs{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.tab{background:#2a2357;border:0;font-family:var(--f-pix);font-weight:700;font-size:13px;padding:7px 14px;box-shadow:0 3px 0 #17123a}
+.tab[aria-pressed="true"]{background:var(--gold);color:var(--ink);box-shadow:0 3px 0 #b8902a}
 .maps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .opt{background:#2a2357;border:3px solid transparent;padding:8px 8px 7px;text-align:left;display:flex;flex-direction:column;gap:2px;line-height:1.05;min-width:0}
 .opt:hover{border-color:rgba(255,255,255,.4)}
 .opt[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--gold)}
 .opt b{font-family:var(--f-pix);font-size:16px}
 .opt span{font-size:18px;opacity:.85}
+.opt small{font-size:16px;opacity:.85}
 .opt i{font-style:normal;color:var(--amber);font-size:14px;letter-spacing:2px}
 .opt[aria-pressed="true"] i{color:#c06a00}
 .seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
@@ -90,6 +108,9 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .fin .stat{align-items:flex-start}
 .fin .stat b{font-size:28px}
 
+@media (max-width:1100px){
+  .mid.log-on{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) 150px}
+}
 @media (max-width:760px){
   html,body{height:auto;overflow:auto}
   .app{height:auto}
@@ -97,7 +118,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   .fl{order:3;flex-basis:100%}
   .score{margin-left:auto}
   .wrap{width:100%}
-  .pad{flex-wrap:wrap}
+  .mid.log-on{grid-template-rows:auto 200px}
   .maps{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
@@ -115,7 +136,10 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
       <div class="stat"><div class="pips" id="pips"></div><span>STRIKES</span></div>
     </div>
   </header>
-  <div class="wrap" id="wrap"><canvas id="map" aria-label="Airspace grid"></canvas></div>
+  <div class="mid" id="mid">
+    <div class="wrap" id="wrap"><canvas id="map" aria-label="Airspace grid"></canvas></div>
+    <aside class="radio" aria-label="Radio log"><h2>RADIO LOG <span id="freq">124.35</span></h2><div id="log"></div></aside>
+  </div>
   <footer class="bar">
     <div class="pad">
       <button class="k" data-a="L" title="Turn left (←)">◀ LEFT</button>
@@ -126,8 +150,9 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
     <div class="msg" id="msg">Pick a plane by clicking it or pressing its letter.</div>
     <div class="pad">
       <button class="k sm" id="bSpeed" title="Game speed">SPEED: NORMAL</button>
-      <button class="k sm" id="bPause" aria-pressed="false">PAUSE</button>
+      <button class="k sm" id="bLog" aria-pressed="false">RADIO LOG</button>
       <button class="k sm" id="bVoice" aria-pressed="true">VOICE</button>
+      <button class="k sm" id="bPause" aria-pressed="false">PAUSE</button>
       <button class="k sm" id="bMenu">MENU</button>
     </div>
     <div class="credit">KENNEDY APPROACH · GAME RECREATED BY MATHEW DOUGHTY</div>
@@ -141,86 +166,146 @@ const $=s=>document.querySelector(s);
 const cv=$('#map'),ctx=cv.getContext('2d');
 const COLS=22,ROWS=14,PAD=1.3;
 const DIRS=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+const COMPASS=['north','north-east','east','south-east','south','south-west','west','north-west'];
 const NATO={A:'Alpha',B:'Bravo',C:'Charlie',D:'Delta',E:'Echo',F:'Foxtrot',G:'Golf',H:'Hotel',I:'India',J:'Juliet',K:'Kilo',L:'Lima',M:'Mike',N:'November',O:'Oscar',P:'Papa',Q:'Quebec',R:'Romeo',S:'Sierra',T:'Tango',U:'Uniform',V:'Victor',W:'Whiskey',X:'X-ray',Y:'Yankee',Z:'Zulu'};
 const RANKS=['TRAINEE','CONTROLLER','SENIOR','SUPERVISOR','CHIEF'],RANK_AT=[0,5,12,20,30];
 const COL={ARR:'#ffb13b',DEP:'#ffffff',OVF:'#9bf3ff'};
 const NUM=['zero','one','two','three','four','five'];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 
-/* Maps: gates on the grid edge, runways as runs of grid points along one of the 8 directions (ax). */
+/* Aircraft sizes: light planes are slow and fly low; heavies need more room. */
+const SIZES={
+  L:{name:'LIGHT',types:['C172','PA28','DA40','SR22'],scale:.3,mul:1.45,maxAlt:3,sep:1.5,spawn:[2,3]},
+  M:{name:'MEDIUM',types:['B737','A320','E190','A321'],scale:.42,mul:1,maxAlt:5,sep:1.5,spawn:[4,5]},
+  H:{name:'HEAVY',types:['B747','A380','B777','A350'],scale:.56,mul:1.1,maxAlt:5,sep:2.05,spawn:[4,5]}
+};
+const exitAlt=p=>SIZES[p.size].maxAlt;
+
+/* Maps: gates on the grid edge [x,y,spoken name]; runways are runs of grid points along one of 8 directions (ax). */
 const MAPS={
-  ATL:{name:'ATLANTA',city:'Atlanta',stars:1,blurb:'One runway. Gentle start.',label:[9,7.8],
+  // USA
+  ATL:{region:'USA',name:'ATLANTA',city:'Atlanta',stars:1,blurb:'One runway. Gentle start.',
     gates:{WSH:[6,0,'Washington'],BST:[16,0,'Boston'],CHI:[0,3,'Chicago'],DAL:[0,7,'Dallas'],NOR:[0,11,'Norfolk'],LON:[21,7,'London'],TAM:[6,13,'Tampa'],MIA:[16,13,'Miami']},
     runways:[{cells:[[8,7],[9,7],[10,7]],ax:2}]},
-  DEN:{name:'DENVER',city:'Denver',stars:2,blurb:'Two runways, crossways.',label:[10.5,7],
+  DEN:{region:'USA',name:'DENVER',city:'Denver',stars:2,blurb:'Two runways, crossways.',
     gates:{SEA:[4,0,'Seattle'],MSP:[14,0,'Minneapolis'],SLC:[0,4,'Salt Lake'],LAX:[0,10,'Los Angeles'],CHI:[21,3,'Chicago'],KCI:[21,10,'Kansas City'],PHX:[5,13,'Phoenix'],DFW:[16,13,'Dallas']},
     runways:[{cells:[[6,5],[7,5],[8,5]],ax:2},{cells:[[14,7],[14,8],[14,9]],ax:0}]},
-  DFW:{name:'DALLAS',city:'Dallas',stars:3,blurb:'Twin parallel runways.',label:[10.5,9.4],
+  DFW:{region:'USA',name:'DALLAS',city:'Dallas',stars:3,blurb:'Twin parallel runways.',
     gates:{OKC:[9,0,'Oklahoma'],STL:[18,0,'St Louis'],ABQ:[0,3,'Albuquerque'],ELP:[0,10,'El Paso'],MEM:[21,7,'Memphis'],SAT:[5,13,'San Antonio'],IAH:[15,13,'Houston']},
     runways:[{cells:[[9,5],[9,6],[9,7]],ax:0},{cells:[[12,6],[12,7],[12,8]],ax:0}]},
-  IAD:{name:'WASHINGTON',city:'Washington',stars:4,blurb:'A diagonal runway to line up.',label:[11.5,11.3],
+  IAD:{region:'USA',name:'WASHINGTON',city:'Washington',stars:4,blurb:'A diagonal to line up.',
     gates:{PIT:[5,0,'Pittsburgh'],NYC:[17,0,'New York'],CLE:[0,3,'Cleveland'],RIC:[0,11,'Richmond'],PHL:[21,4,'Philadelphia'],ORF:[21,11,'Norfolk'],CLT:[3,13,'Charlotte'],RDU:[10,13,'Raleigh']},
     runways:[{cells:[[8,9],[9,8],[10,7]],ax:1},{cells:[[12,10],[13,10],[14,10]],ax:2}]},
-  JFK:{name:'NEW YORK',city:'Kennedy',stars:5,blurb:'Three runways. The big one.',label:[11.3,9.8],
+  JFK:{region:'USA',name:'NEW YORK',city:'Kennedy',stars:5,blurb:'Three runways. The big one.',
     gates:{ALB:[8,0,'Albany'],BOS:[17,0,'Boston'],CHI:[0,3,'Chicago'],PIT:[0,9,'Pittsburgh'],LON:[21,5,'London'],BDA:[21,11,'Bermuda'],DCA:[5,13,'Washington'],MIA:[14,13,'Miami']},
-    runways:[{cells:[[7,8],[8,8],[9,8]],ax:2},{cells:[[11,5],[12,6],[13,7]],ax:3},{cells:[[16,8],[16,9],[16,10]],ax:0}]}
+    runways:[{cells:[[7,8],[8,8],[9,8]],ax:2},{cells:[[11,5],[12,6],[13,7]],ax:3},{cells:[[16,8],[16,9],[16,10]],ax:0}]},
+  // Europe
+  MAN:{region:'EUROPE',name:'MANCHESTER',city:'Manchester',stars:1,blurb:'One runway. Good warm-up.',
+    gates:{GLA:[5,0,'Glasgow'],NCL:[15,0,'Newcastle'],BFS:[0,3,'Belfast'],DUB:[0,9,'Dublin'],AMS:[21,4,'Amsterdam'],LHR:[21,10,'Heathrow'],BHX:[13,13,'Birmingham'],CWL:[4,13,'Cardiff']},
+    runways:[{cells:[[9,7],[10,7],[11,7]],ax:2}]},
+  LHR:{region:'EUROPE',name:'LONDON',city:'Heathrow',stars:2,blurb:'Twin parallel runways.',
+    gates:{MAN:[6,0,'Manchester'],EDI:[15,0,'Edinburgh'],DUB:[0,4,'Dublin'],NYC:[0,10,'New York'],AMS:[21,3,'Amsterdam'],FRA:[21,8,'Frankfurt'],CDG:[15,13,'Paris'],MAD:[5,13,'Madrid']},
+    runways:[{cells:[[7,6],[8,6],[9,6]],ax:2},{cells:[[11,9],[12,9],[13,9]],ax:2}]},
+  CDG:{region:'EUROPE',name:'PARIS',city:'Charles de Gaulle',stars:3,blurb:'Parallels plus a cross runway.',
+    gates:{LON:[7,0,'London'],AMS:[16,0,'Amsterdam'],NYC:[0,4,'New York'],BOD:[0,10,'Bordeaux'],FRA:[21,4,'Frankfurt'],ZRH:[21,10,'Zurich'],BCN:[8,13,'Barcelona'],ROM:[17,13,'Rome']},
+    runways:[{cells:[[6,5],[7,5],[8,5]],ax:2},{cells:[[6,9],[7,9],[8,9]],ax:2},{cells:[[15,6],[15,7],[15,8]],ax:0}]},
+  AMS:{region:'EUROPE',name:'AMSTERDAM',city:'Schiphol',stars:4,blurb:'Runways every which way.',
+    gates:{EDI:[0,2,'Edinburgh'],OSL:[10,0,'Oslo'],CPH:[19,0,'Copenhagen'],LON:[0,7,'London'],BRU:[0,12,'Brussels'],BER:[21,6,'Berlin'],PAR:[6,13,'Paris'],FRA:[16,13,'Frankfurt']},
+    runways:[{cells:[[7,9],[8,8],[9,7]],ax:1},{cells:[[12,4],[12,5],[12,6]],ax:0},{cells:[[13,10],[14,10],[15,10]],ax:2}]},
+  FRA:{region:'EUROPE',name:'FRANKFURT',city:'Frankfurt',stars:5,blurb:'Four runways. Hectic.',
+    gates:{HAM:[9,0,'Hamburg'],BER:[17,0,'Berlin'],AMS:[0,3,'Amsterdam'],PAR:[0,9,'Paris'],WAW:[21,4,'Warsaw'],VIE:[21,10,'Vienna'],ZRH:[6,13,'Zurich'],MUC:[15,13,'Munich']},
+    runways:[{cells:[[5,4],[6,5],[7,6]],ax:3},{cells:[[5,8],[6,9],[7,10]],ax:3},{cells:[[14,4],[14,5],[14,6]],ax:0},{cells:[[11,10],[12,10],[13,10]],ax:2}]},
+  // World
+  SYD:{region:'WORLD',name:'SYDNEY',city:'Sydney',stars:1,blurb:'One north-south runway.',
+    gates:{DRW:[6,0,'Darwin'],BNE:[15,0,'Brisbane'],PER:[0,5,'Perth'],ADL:[0,10,'Adelaide'],AKL:[21,7,'Auckland'],MEL:[6,13,'Melbourne'],HBA:[15,13,'Hobart']},
+    runways:[{cells:[[11,6],[11,7],[11,8]],ax:0}]},
+  DXB:{region:'WORLD',name:'DUBAI',city:'Dubai',stars:2,blurb:'Twin diagonal runways.',
+    gates:{IST:[5,0,'Istanbul'],LON:[13,0,'London'],CAI:[0,5,'Cairo'],NBO:[0,11,'Nairobi'],DEL:[21,4,'Delhi'],BOM:[21,10,'Mumbai'],JNB:[7,13,'Johannesburg'],SIN:[16,13,'Singapore']},
+    runways:[{cells:[[6,5],[7,6],[8,7]],ax:3},{cells:[[11,5],[12,6],[13,7]],ax:3}]},
+  HND:{region:'WORLD',name:'TOKYO',city:'Haneda',stars:3,blurb:'Three runways, three angles.',
+    gates:{PEK:[3,0,'Beijing'],CTS:[12,0,'Sapporo'],SEL:[0,4,'Seoul'],SHA:[0,10,'Shanghai'],LAX:[21,3,'Los Angeles'],HNL:[21,9,'Honolulu'],HKG:[5,13,'Hong Kong'],OKA:[13,13,'Okinawa']},
+    runways:[{cells:[[6,8],[7,8],[8,8]],ax:2},{cells:[[12,5],[12,6],[12,7]],ax:0},{cells:[[14,10],[15,9],[16,8]],ax:1}]},
+  HKG:{region:'WORLD',name:'HONG KONG',city:'Hong Kong',stars:4,blurb:'Close parallels and a diagonal.',
+    gates:{PEK:[7,0,'Beijing'],SHA:[16,0,'Shanghai'],CAN:[0,3,'Guangzhou'],BKK:[0,10,'Bangkok'],TPE:[21,4,'Taipei'],MNL:[21,11,'Manila'],SIN:[10,13,'Singapore']},
+    runways:[{cells:[[7,6],[8,6],[9,6]],ax:2},{cells:[[7,8],[8,8],[9,8]],ax:2},{cells:[[13,9],[14,10],[15,11]],ax:3}]},
+  SIN:{region:'WORLD',name:'SINGAPORE',city:'Changi',stars:5,blurb:'Four runways. Expert only.',
+    gates:{BKK:[6,0,'Bangkok'],HKG:[15,0,'Hong Kong'],KUL:[0,4,'Kuala Lumpur'],CMB:[0,10,'Colombo'],MNL:[21,3,'Manila'],SYD:[21,10,'Sydney'],CGK:[8,13,'Jakarta'],DPS:[17,13,'Bali']},
+    runways:[{cells:[[8,4],[8,5],[8,6]],ax:0},{cells:[[11,4],[11,5],[11,6]],ax:0},{cells:[[7,10],[8,10],[9,10]],ax:2},{cells:[[13,10],[14,9],[15,8]],ax:1}]}
 };
-const DIFF={EASY:{start:2,cap:6,base:18,min:9,strikes:5,label:'Fewer planes, 5 strikes'},NORMAL:{start:3,cap:10,base:14,min:5,strikes:3,label:'The classic'},HARD:{start:4,cap:13,base:10,min:3.5,strikes:3,label:'Busy skies from the start'}};
+const REGIONS=['USA','EUROPE','WORLD'];
+// Place each airport's name plate on a free spot near its runways.
+for(const k in MAPS){
+  const m=MAPS[k],cs=m.runways.flatMap(r=>r.cells);
+  const cx=cs.reduce((a,c)=>a+c[0],0)/cs.length,cy=cs.reduce((a,c)=>a+c[1],0)/cs.length;
+  let best=[cx,cy+1.2],bs=-1;
+  for(let dy=-3;dy<=3;dy+=.5)for(let dx=-3;dx<=3;dx+=.5){
+    const x=cx+dx,y=cy+dy,clear=Math.min(...cs.map(c=>Math.hypot(c[0]-x,(c[1]-y)*1.6)));
+    const score=clear>=1.1?100-Math.hypot(dx,dy):clear;
+    if(score>bs){bs=score;best=[x,y]}
+  }
+  m.label=best;
+}
+
+const DIFF={EASY:{start:2,cap:6,base:18,min:9,strikes:10,label:'Fewer planes, 10 strikes'},NORMAL:{start:3,cap:10,base:14,min:5,strikes:6,label:'The classic, 6 strikes'},HARD:{start:4,cap:13,base:10,min:3.5,strikes:4,label:'Busy skies, 4 strikes'}};
 const SPEEDS={SLOW:2.6,NORMAL:1.6,FAST:1.1};
 
 const store={get(k,d){try{const v=localStorage.getItem('ka_'+k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem('ka_'+k,v)}catch(e){}}};
 let opt={map:store.get('map','ATL'),diff:store.get('diff','NORMAL'),speed:store.get('speed','NORMAL')};
 if(!MAPS[opt.map])opt.map='ATL';if(!DIFF[opt.diff])opt.diff='NORMAL';if(!SPEEDS[opt.speed])opt.speed='NORMAL';
+let region=MAPS[opt.map].region;
 
-let G,M,AC=null,voiceOn=store.get('voice','1')==='1';
+let G,M,AC=null,voiceOn=store.get('voice','1')==='1',logOn=store.get('log','1')==='1';
 const STEP=()=>SPEEDS[opt.speed];
 const D=()=>DIFF[opt.diff];
 const gname=k=>k===M.code?M.city:M.gates[k][2];
+const call=p=>NATO[p.id]+(p.size==='H'?' heavy':'');
 
 function reset(demo){
   M=MAPS[opt.map];M.code=opt.map;
   G={planes:[],t:0,score:0,strikes:0,handled:0,level:0,demo,over:false,paused:false,spawnIn:demo?2:1,sel:null,pairs:new Set(),pops:[],hover:null};
-  const pips=$('#pips');pips.innerHTML='<i></i>'.repeat(D().strikes);
+  $('#pips').innerHTML='<i></i>'.repeat(D().strikes);
   $('#where').textContent=`${M.name} · ${opt.diff}`;
   lastFl='';
 }
 function freeLetter(){const used=new Set(G.planes.map(p=>p.id));for(const c of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')if(!used.has(c))return c;return null}
 function inwardDir(g){const[x,y]=M.gates[g];return y===0?4:y===ROWS-1?0:x===0?2:6}
 function gateClear(g){const[x,y]=M.gates[g];return!G.planes.some(p=>Math.hypot(p.x-x,p.y-y)<3)}
-function mk(kind,orig,dest,x,y,h,alt){
+function rollSize(){const r=Math.random();return r<.25?'L':r<.75?'M':'H'}
+function mk(kind,orig,dest,x,y,h,alt,size){
   const id=freeLetter();if(!id)return null;
-  const p={id,kind,orig,dest,cx:x,cy:y,x,y,h,nh:h,t:0,alt,ta:alt,alert:0,pitch:.8+Math.random()*.4,vi:Math.floor(Math.random()*30)};
+  const S=SIZES[size];
+  const p={id,kind,orig,dest,size,type:pick(S.types),cx:x,cy:y,x,y,h,nh:h,t:0,alt,ta:alt,alert:0,pitch:.8+Math.random()*.4,vi:Math.floor(Math.random()*30)};
   G.planes.push(p);return p;
 }
 function runwayClear(){return!G.planes.some(p=>p.alt<=1&&M.runways.some(r=>r.cells.some(([x,y])=>Math.hypot(p.x-x,p.y-y)<2.5)))}
 function spawn(){
   const gates=Object.keys(M.gates).filter(gateClear);
-  const r=Math.random();
+  const r=Math.random(),size=rollSize(),S=SIZES[size];
   const deps=G.planes.filter(p=>p.kind==='DEP'&&p.alt<=1).length;
   if(r<.3&&deps===0&&!G.demo&&runwayClear()){
     const rw=pick(M.runways),fwd=Math.random()<.5,cells=rw.cells,start=fwd?cells[0]:cells[cells.length-1],h=fwd?rw.ax:(rw.ax+4)%8;
     const dest=pick(Object.keys(M.gates));
-    const p=mk('DEP',M.code,dest,start[0],start[1],h,0);
-    if(p){p.ta=1;say(p,`${NATO[p.id]}, rolling, departing for ${gname(dest)}`)}
+    const p=mk('DEP',M.code,dest,start[0],start[1],h,0,size);
+    if(p){p.ta=1;say(p,`${call(p)}, rolling, departing for ${gname(dest)}`)}
     return;
   }
   if(!gates.length)return;
-  const g=pick(gates),[x,y]=M.gates[g];
+  const g=pick(gates),[x,y]=M.gates[g],alt=pick(S.spawn);
   if(r<.72){
-    const p=mk('ARR',g,M.code,x,y,inwardDir(g),pick([4,5]));
-    if(p)say(p,`${M.city} approach, ${NATO[p.id]}, inbound from ${gname(g)} at ${NUM[p.alt]} thousand`);
+    const p=mk('ARR',g,M.code,x,y,inwardDir(g),alt,size);
+    if(p)say(p,`${M.city} approach, ${call(p)}, inbound from ${gname(g)} at ${NUM[p.alt]} thousand`);
   }else{
     const far=Object.keys(M.gates).filter(k=>Math.hypot(M.gates[k][0]-x,M.gates[k][1]-y)>10);
     if(!far.length)return;
-    const d=pick(far),p=mk('OVF',g,d,x,y,inwardDir(g),pick([3,4,5]));
-    if(p)say(p,`${NATO[p.id]}, from ${gname(g)}, routing ${gname(d)}, ${NUM[p.alt]} thousand`);
+    const d=pick(far),p=mk('OVF',g,d,x,y,inwardDir(g),alt,size);
+    if(p)say(p,`${call(p)}, from ${gname(g)}, routing ${gname(d)}, ${NUM[p.alt]} thousand`);
   }
 }
 function demoSeed(){
   const keys=Object.keys(M.gates);
   for(let i=0;i<5;i++){
-    const kind=i%2?'OVF':'ARR';
-    const p=mk(kind,pick(keys),kind==='ARR'?M.code:pick(keys),3+Math.floor(Math.random()*16),2+Math.floor(Math.random()*10),Math.floor(Math.random()*8),1+Math.floor(Math.random()*5));
+    const kind=i%2?'OVF':'ARR',size=['M','H','L','M','H'][i];
+    const p=mk(kind,pick(keys),kind==='ARR'?M.code:pick(keys),3+Math.floor(Math.random()*16),2+Math.floor(Math.random()*10),Math.floor(Math.random()*8),1+Math.floor(Math.random()*SIZES[size].maxAlt),size);
     if(p)p.t=Math.random();
   }
 }
@@ -236,7 +321,7 @@ function step(dt){
     G.spawnIn=(G.demo?5:Math.max(d.min,d.base-G.handled*.35)*(.8+Math.random()*.4))*slow;
   }
   for(const p of G.planes){
-    p.t+=dt/STEP();
+    p.t+=dt/(STEP()*SIZES[p.size].mul);
     while(p.t>=1&&!p.done){p.t-=1;arrive(p)}
     if(p.done)continue;
     const[dx,dy]=DIRS[p.h];p.x=p.cx+dx*p.t;p.y=p.cy+dy*p.t;
@@ -251,7 +336,7 @@ function arrive(p){
   if(p.alt<p.ta)p.alt++;else if(p.alt>p.ta)p.alt--;
   if(p.dest===M.code&&p.alt===1&&onRunway(p)){
     p.done=true;if(G.demo)return;
-    add(100,'LANDED',p);handled();say(p,`${NATO[p.id]}, down and clear, thanks ${M.city}`);msg(`<b>${p.id}</b> landed safely.`);return;
+    add(100,'LANDED',p);handled();say(p,`${call(p)}, down and clear, thanks ${M.city}`);note(`${p.id} (${p.type}) landed safely.`);return;
   }
   p.h=p.nh;
   const nx=p.cx+DIRS[p.h][0],ny=p.cy+DIRS[p.h][1];
@@ -260,37 +345,37 @@ function arrive(p){
 function exit(p){
   p.done=true;if(G.demo)return;
   let best=null,bd=9;for(const g in M.gates){const d=Math.hypot(M.gates[g][0]-p.cx,M.gates[g][1]-p.cy);if(d<bd){bd=d;best=g}}
-  const at=bd<=1.5?best:null;
-  if(p.dest===M.code){strike(`<b>${p.id}</b> should have landed at ${M.city}, not left the area.`);add(-50,'LOST',p);return}
+  const at=bd<=1.5?best:null,need=exitAlt(p);
+  if(p.dest===M.code){strike(`${p.id} should have landed at ${M.city}, not left the area.`);add(-50,'LOST',p);return}
   if(at===p.dest){
-    if(p.alt===5){add(100,'HANDOFF',p);msg(`<b>${p.id}</b> handed off to ${gname(at)}.`)}
-    else{add(50,'LOW',p);msg(`<b>${p.id}</b> reached ${gname(at)}, but should leave at 5,000 ft. Half points.`)}
+    if(p.alt===need){add(100,'HANDOFF',p);note(`${p.id} handed off to ${gname(at)}.`);say(p,`${call(p)}, over to ${gname(at)}, good day`)}
+    else{add(50,'LOW',p);note(`${p.id} reached ${gname(at)}, but should leave at ${need},000 ft. Half points.`)}
     handled();
-  }else{strike(`<b>${p.id}</b> left ${at?'via '+gname(at):'off any exit'} instead of ${gname(p.dest)}.`);add(-50,'WRONG EXIT',p)}
+  }else{strike(`${p.id} left ${at?'via '+gname(at):'off any exit'} instead of ${gname(p.dest)}.`);add(-50,'WRONG EXIT',p)}
 }
 function conflicts(){
   const A=G.planes.filter(p=>p.alt>0);
   for(const p of A)p.alert=0;
   for(let i=0;i<A.length;i++)for(let j=i+1;j<A.length;j++){
     const a=A[i],b=A[j];if(a.alt!==b.alt)continue;
-    const d=Math.hypot(a.x-b.x,a.y-b.y),key=[a.id,b.id].sort().join('');
+    const d=Math.hypot(a.x-b.x,a.y-b.y),key=[a.id,b.id].sort().join(''),sep=Math.max(SIZES[a.size].sep,SIZES[b.size].sep);
     if(d<.55&&!G.demo){a.alert=b.alert=2;crash(a,b);return}
-    if(d<1.5){a.alert=b.alert=2;if(!G.pairs.has(key)){G.pairs.add(key);if(!G.demo){strike(`Near miss: <b>${a.id}</b> and <b>${b.id}</b> at ${a.alt},000 ft.`);beep(880,.3)}}}
-    else{if(d<2.6){a.alert=Math.max(a.alert,1);b.alert=Math.max(b.alert,1)}if(d>2)G.pairs.delete(key)}
+    if(d<sep){a.alert=b.alert=2;if(!G.pairs.has(key)){G.pairs.add(key);if(!G.demo){strike(`Near miss: ${a.id} and ${b.id} at ${a.alt},000 ft${sep>1.5?' (heavies need extra room)':''}.`);beep(880,.3)}}}
+    else{if(d<sep+1.1){a.alert=Math.max(a.alert,1);b.alert=Math.max(b.alert,1)}if(d>sep+.5)G.pairs.delete(key)}
   }
 }
 function add(n,label,p){if(G.demo)return;G.score+=n;G.pops.push({x:p.cx,y:p.cy,text:(n>0?'+':'')+n+' '+label,good:n>0,t0:performance.now()})}
 function handled(){
   G.handled++;const nl=RANK_AT.filter(v=>G.handled>=v).length-1;
-  if(nl>G.level){G.level=nl;G.pops.push({x:COLS/2-.5,y:ROWS/2-3,text:'PROMOTED: '+RANKS[nl],good:true,big:1,t0:performance.now()})}
+  if(nl>G.level){G.level=nl;G.pops.push({x:COLS/2-.5,y:ROWS/2-3,text:'PROMOTED: '+RANKS[nl],good:true,big:1,t0:performance.now()});note('Promoted to '+RANKS[nl]+'. Traffic is picking up.')}
 }
-function strike(t){if(G.demo)return;G.strikes++;msg(t,true);if(G.strikes>=D().strikes)over('Relieved of duty',t.replace(/<[^>]+>/g,'')+' That was your last strike.')}
-function crash(a,b){over('Mid-air collision',`${a.id} and ${b.id} collided at ${a.alt},000 ft.`)}
+function strike(t){if(G.demo)return;G.strikes++;msg(t,true);logLine('sys',null,`STRIKE ${G.strikes}/${D().strikes}: ${t}`,'bad');if(G.strikes>=D().strikes)over('Relieved of duty',t+' That was your last strike.')}
+function crash(a,b){logLine('sys',null,`Mid-air collision: ${a.id} and ${b.id}.`,'bad');over('Mid-air collision',`${a.id} and ${b.id} collided at ${a.alt},000 ft.`)}
 function over(title,detail){
   G.over=true;beep(180,.7);
   $('#card').innerHTML=`<h1>${title}</h1><p class="sub">${M.name} · ${opt.diff} · SHIFT ENDED AT ${clock()}</p><p class="by">GAME RECREATED BY MATHEW DOUGHTY</p><p style="margin:0 0 14px;font-size:22px">${detail}</p>
   <div class="fin"><div class="stat"><b>${G.score}</b><span>SCORE</span></div><div class="stat"><b>${G.handled}</b><span>HANDLED</span></div><div class="stat"><b>${RANKS[G.level]}</b><span>RANK</span></div></div>
-  <div class="row"><button class="go" id="again">SAME AGAIN</button><button class="go ghost" id="menu2">CHANGE MAP</button></div>`;
+  <div class="row"><button class="go" id="again">SAME AGAIN</button><button class="go ghost" id="menu2">CHANGE AIRPORT</button></div>`;
   $('#ov').hidden=false;$('#again').onclick=start;$('#menu2').onclick=menu;$('#again').focus();
 }
 
@@ -298,17 +383,28 @@ function over(title,detail){
 function turnWord(p){const t=(p.nh-p.h+8)%8;return t===0?'straight ahead':t<4?'right turn':t>4?'left turn':'turning around'}
 function command(a){
   const p=G.sel;if(!p||G.over||G.demo)return;
-  if(a==='L'||a==='R'){p.nh=(p.nh+(a==='L'?7:1))%8;say(p,`${NATO[p.id]}, ${turnWord(p)}`,true)}
-  else{const n=Math.max(1,Math.min(5,p.ta+(a==='U'?1:-1)));if(n===p.ta)return;p.ta=n;say(p,`${NATO[p.id]}, ${n>p.alt?'climbing':'descending'} to ${NUM[n]} thousand`,true)}
+  if(a==='L'||a==='R'){
+    p.nh=(p.nh+(a==='L'?7:1))%8;
+    atc(p,`${a==='L'?'turn left':'turn right'}, heading ${COMPASS[p.nh]}`);
+    say(p,`${call(p)}, ${turnWord(p)}`,true);
+  }else{
+    const max=SIZES[p.size].maxAlt,n=Math.max(1,Math.min(max,p.ta+(a==='U'?1:-1)));
+    if(n===p.ta){if(a==='U'&&p.size==='L')msg(`<b>${p.id}</b> is a light aircraft. It can't go above 3,000 ft.`);return}
+    p.ta=n;atc(p,`${n>p.alt?'climb':'descend'} to ${n},000`);
+    say(p,`${call(p)}, ${n>p.alt?'climbing':'descending'} to ${NUM[n]} thousand`,true);
+  }
 }
-function select(p){if(G.demo)return;G.sel=p;if(p)msg(`<b>${p.id}</b> ${p.orig} → ${p.dest}. ${p.dest===M.code?'Line it up along a runway at 1,000 ft.':'Leave at '+p.dest+' at 5,000 ft.'}`)}
+function select(p){
+  if(G.demo)return;G.sel=p;
+  if(p)msg(`<b>${p.id}</b> ${SIZES[p.size].name} ${p.type}, ${p.orig} → ${p.dest}. ${p.dest===M.code?'Line it up along a runway at 1,000 ft.':'Leave at '+p.dest+' at '+exitAlt(p)+',000 ft.'}`);
+}
 function steerTo(wx,wy){
   const p=G.sel;if(!p)return;
   const ang=Math.atan2(wx-p.x,-(wy-p.y))*180/Math.PI,h=((Math.round(ang/45)%8)+8)%8;
-  if(h===p.nh)return;p.nh=h;say(p,`${NATO[p.id]}, ${turnWord(p)}`,true);
+  if(h===p.nh)return;p.nh=h;atc(p,`turn ${COMPASS[h]}`);say(p,`${call(p)}, ${turnWord(p)}`,true);
 }
 
-/* ---------- audio ---------- */
+/* ---------- radio: speech + text log ---------- */
 let voices=[],Q=[],speaking=false,tmr=0;
 function lv(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
 if('speechSynthesis'in window){lv();speechSynthesis.onvoiceschanged=lv}
@@ -319,41 +415,53 @@ function crackle(len=.1){
   s.buffer=b;s.connect(f).connect(g).connect(AC.destination);s.start();
 }
 function beep(fq,len){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=fq;g.gain.setValueAtTime(.06,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+len);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+len)}
+function logLine(kind,who,text,cls){
+  if(G&&G.demo)return;
+  const L=$('#log'),p=document.createElement('p');p.className=cls||kind;
+  const t=document.createElement('span');t.className='t';t.textContent=clock();p.append(t);
+  if(who){const w=document.createElement('span');w.className='w';w.textContent=who+': ';p.append(w)}
+  p.append(document.createTextNode(text));L.prepend(p);while(L.children.length>80)L.lastChild.remove();
+}
+const atc=(p,text)=>logLine('atc','ATC',`${p.id}, ${text}`,'atc');
+const note=t=>{msg(t);logLine('sys',null,t,'sys')};
 function say(p,text,replace){
-  if(G.demo||!voiceOn||!('speechSynthesis'in window))return;
+  if(G.demo)return;
+  logLine('plt',p.id,text,'plt');
+  if(!voiceOn||!('speechSynthesis'in window))return;
   if(replace)Q=Q.filter(q=>q.p!==p);
   Q.push({p,text});if(Q.length>3)Q.splice(0,Q.length-3);pump();
 }
 function pump(){
   if(speaking||!Q.length)return;const{p,text}=Q.shift();speaking=true;crackle();
-  const u=new SpeechSynthesisUtterance(text);if(voices.length)u.voice=voices[p.vi%voices.length];u.pitch=p.pitch;u.rate=1.15;
+  const u=new SpeechSynthesisUtterance(text);if(voices.length)u.voice=voices[p.vi%voices.length];u.pitch=p.size==='H'?Math.min(p.pitch,.85):p.size==='L'?Math.max(p.pitch,1.1):p.pitch;u.rate=1.15;
   const done=()=>{if(!speaking)return;speaking=false;clearTimeout(tmr);crackle(.06);setTimeout(pump,200)};
   u.onend=done;u.onerror=done;tmr=setTimeout(done,7000);try{speechSynthesis.speak(u)}catch(e){done()}
 }
 
 /* ---------- UI ---------- */
-function clock(){const s=Math.floor(G.t);return[s/3600,s/60%60,s%60].map(v=>String(Math.floor(v)).padStart(2,'0')).join(':')}
-function msg(h,bad){const m=$('#msg');m.innerHTML=h;m.classList.toggle('bad',!!bad)}
+function clock(){if(!G)return'00:00:00';const s=Math.floor(G.t);return[s/3600,s/60%60,s%60].map(v=>String(Math.floor(v)).padStart(2,'0')).join(':')}
+function msg(h,bad){const m=$('#msg');m.innerHTML=h.replace(/^([A-Z]) /,'<b>$1</b> ');m.classList.toggle('bad',!!bad)}
 let lastFl='';
 function ui(){
   $('#clock').textContent=clock();
   $('#sc').textContent=G.demo?0:G.score;$('#rk').textContent=RANKS[G.level];
   [...$('#pips').children].forEach((e,i)=>e.classList.toggle('on',!G.demo&&i<G.strikes));
   const ps=[...G.planes].sort((a,b)=>a.id<b.id?-1:1);
-  let h=`<div class="keys"><span>ID:</span><span>ORIG:</span><span>DEST:</span><span>ALT:</span></div>`;
+  let h=`<div class="keys"><span>ID:</span><span>TYPE:</span><span>ORIG:</span><span>DEST:</span><span>ALT:</span></div>`;
   if(!ps.length)h+=`<span class="empty">WAITING FOR TRAFFIC…</span>`;
   for(const p of ps){
     const arrow=p.ta>p.alt?'↑':p.ta<p.alt?'↓':'';
-    h+=`<button class="col${p===G.sel?' sel':''}${p.alert?' warn':''}" data-id="${p.id}"><span class="id">${p.id}</span><span>${p.orig}</span><span>${p.dest}</span><span>${p.alt}${arrow}</span></button>`;
+    h+=`<button class="col${p===G.sel?' sel':''}${p.alert?' warn':''}" data-id="${p.id}"><span class="id">${p.id}</span><span class="ty">${p.type}</span><span>${p.orig}</span><span>${p.dest}</span><span>${p.alt}${arrow}</span></button>`;
   }
   if(h!==lastFl){$('#fl').innerHTML=h;lastFl=h}
 }
 function setSpeedBtn(){$('#bSpeed').textContent='SPEED: '+opt.speed}
+function setLog(v){logOn=v;store.set('log',v?'1':'0');$('#mid').classList.toggle('log-on',v);$('#bLog').setAttribute('aria-pressed',v)}
 
 /* ---------- drawing ---------- */
 let CW=800,CH=520,cell=36,DPR=1;
 function resize(){
-  const r=$('#wrap').getBoundingClientRect();
+  const r=$('#wrap').getBoundingClientRect();if(!r.width)return;
   const gw=COLS-1+PAD*2,gh=ROWS-1+PAD*2;
   const availH=window.innerWidth<=760?r.width*gh/gw:r.height;
   cell=Math.max(14,Math.min(r.width/gw,availH/gh));
@@ -363,12 +471,27 @@ function resize(){
 new ResizeObserver(resize).observe($('#wrap'));addEventListener('resize',resize);
 const X=x=>(x+PAD)*cell,Y=y=>(y+PAD)*cell;
 
-function planePath(s){
+function jetPath(s){
   ctx.beginPath();
   ctx.moveTo(0,-s);ctx.lineTo(s*.14,-s*.6);ctx.lineTo(s*.14,-s*.15);ctx.lineTo(s*.9,s*.25);ctx.lineTo(s*.9,s*.4);ctx.lineTo(s*.14,s*.18);
   ctx.lineTo(s*.12,s*.65);ctx.lineTo(s*.4,s*.85);ctx.lineTo(s*.4,s*.97);ctx.lineTo(0,s*.85);
   ctx.lineTo(-s*.4,s*.97);ctx.lineTo(-s*.4,s*.85);ctx.lineTo(-s*.12,s*.65);ctx.lineTo(-s*.14,s*.18);ctx.lineTo(-s*.9,s*.4);ctx.lineTo(-s*.9,s*.25);
   ctx.lineTo(-s*.14,-s*.15);ctx.lineTo(-s*.14,-s*.6);ctx.closePath();
+}
+function propPath(s){ // high-wing light aircraft
+  ctx.beginPath();
+  ctx.moveTo(-s*.1,-s*.8);ctx.lineTo(s*.1,-s*.8);ctx.lineTo(s*.12,-s*.35);ctx.lineTo(s*1,-s*.35);ctx.lineTo(s*1,-s*.12);ctx.lineTo(s*.1,-s*.12);
+  ctx.lineTo(s*.07,s*.6);ctx.lineTo(s*.4,s*.62);ctx.lineTo(s*.4,s*.8);ctx.lineTo(-s*.4,s*.8);ctx.lineTo(-s*.4,s*.62);ctx.lineTo(-s*.07,s*.6);
+  ctx.lineTo(-s*.1,-s*.12);ctx.lineTo(-s*1,-s*.12);ctx.lineTo(-s*1,-s*.35);ctx.lineTo(-s*.12,-s*.35);ctx.closePath();
+}
+function drawPlane(p,s,fill,shadow){
+  if(p.size==='L')propPath(s);else jetPath(s);
+  ctx.fillStyle=fill;ctx.fill();
+  if(shadow)return;
+  ctx.strokeStyle='rgba(12,16,54,.7)';ctx.lineWidth=1.2;ctx.stroke();
+  ctx.fillStyle='rgba(12,16,54,.55)';
+  if(p.size==='L'){ctx.fillRect(-s*.32,-s*.9,s*.64,s*.07)}
+  else if(p.size==='H'){for(const ex of[-.62,-.36,.36,.62])ctx.fillRect(ex*s-s*.05,s*.05+Math.abs(ex)*s*.18,s*.1,s*.2)}
 }
 function drawRunway(rw){
   const a=rw.cells[0],b=rw.cells[rw.cells.length-1];
@@ -391,38 +514,36 @@ function draw(now){
   const fs=Math.max(11,cell*.55);
   ctx.font=`700 ${fs}px Silkscreen,monospace`;ctx.textBaseline='middle';
   plate(M.code,X(M.label[0]),Y(M.label[1]),false);
-  // approach arrows at each runway end for a selected arrival
   if(G.sel&&G.sel.dest===M.code){
     ctx.fillStyle='rgba(255,227,107,'+(.5+.4*Math.sin(ts*4))+')';
     for(const rw of M.runways){
-      const ends=[[rw.cells[0],rw.ax],[rw.cells[rw.cells.length-1],(rw.ax+4)%8]];
-      for(const[c,h]of ends){const d=DIRS[(h+4)%8],ex=c[0]+d[0],ey=c[1]+d[1];
+      for(const[c,h]of[[rw.cells[0],rw.ax],[rw.cells[rw.cells.length-1],(rw.ax+4)%8]]){
+        const d=DIRS[(h+4)%8],ex=c[0]+d[0],ey=c[1]+d[1];
         if(ex<0||ex>COLS-1||ey<0||ey>ROWS-1)continue;
         ctx.save();ctx.translate(X(ex),Y(ey));ctx.rotate(h*Math.PI/4);ctx.beginPath();ctx.moveTo(0,-cell*.25);ctx.lineTo(cell*.18,cell*.1);ctx.lineTo(-cell*.18,cell*.1);ctx.closePath();ctx.fill();ctx.restore()}
     }
   }
-  // gates
   for(const k in M.gates){const[x,y]=M.gates[k];const hot=G.sel&&G.sel.dest===k;
     const oy=y===0?-.55:y===ROWS-1?.55:0;
     plate(k,X(x)+(x===0?-cell*.2:x===COLS-1?cell*.2:0),Y(y+oy),hot,x===0?'right':x===COLS-1?'left':'center',ts);
   }
   const sel=G.sel;
   for(const p of G.planes){
-    const px=X(p.x),py=Y(p.y),rot=p.h*Math.PI/4,s=cell*.42;
+    const px=X(p.x),py=Y(p.y),rot=p.h*Math.PI/4,s=cell*SIZES[p.size].scale;
     let c=COL[p.kind];if(p.alert===2)c=Math.floor(ts*6)%2?'#ff4d5e':'#ffffff';else if(p.alert===1)c='#ffe36b';
     if(p===sel){
       let cx=p.cx+DIRS[p.h][0],cy=p.cy+DIRS[p.h][1];const h=p.nh;
       ctx.fillStyle='rgba(255,227,107,.85)';
       for(let i=0;i<5;i++){if(cx<0||cx>COLS-1||cy<0||cy>ROWS-1)break;ctx.beginPath();ctx.arc(X(cx),Y(cy),cell*.09,0,7);ctx.fill();cx+=DIRS[h][0];cy+=DIRS[h][1]}
-      ctx.strokeStyle='rgba(255,227,107,'+(.6+.4*Math.sin(ts*5))+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py,cell*.62,0,7);ctx.stroke();
+      ctx.strokeStyle='rgba(255,227,107,'+(.6+.4*Math.sin(ts*5))+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py,cell*(.3+SIZES[p.size].scale*.8),0,7);ctx.stroke();
     }
     const so=cell*(.06+p.alt*.07);
-    ctx.save();ctx.translate(px+so,py+so);ctx.rotate(rot);planePath(s*(1-p.alt*.03));ctx.fillStyle='rgba(10,20,70,.3)';ctx.fill();ctx.restore();
-    ctx.save();ctx.translate(px,py);ctx.rotate(rot);planePath(s*(.9+p.alt*.04));ctx.fillStyle=c;ctx.fill();ctx.strokeStyle='rgba(12,16,54,.7)';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();
+    ctx.save();ctx.translate(px+so,py+so);ctx.rotate(rot);drawPlane(p,s*(1-p.alt*.03),'rgba(10,20,70,.3)',true);ctx.restore();
+    ctx.save();ctx.translate(px,py);ctx.rotate(rot);drawPlane(p,s*(.9+p.alt*.04),c,false);ctx.restore();
     if(p.nh!==p.h){const d=DIRS[p.nh],l=Math.hypot(d[0],d[1]);ctx.strokeStyle='#ffe36b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+d[0]/l*cell*.7,py+d[1]/l*cell*.7);ctx.stroke()}
     const tf=Math.max(10,cell*.4);ctx.font=`700 ${tf}px Silkscreen,monospace`;
     const label=p.id+p.alt+(p.ta>p.alt?'↑':p.ta<p.alt?'↓':''),tw=ctx.measureText(label).width+8;
-    const tx=px+cell*.42,ty=py-cell*.62;
+    const tx=px+cell*(.2+SIZES[p.size].scale*.55),ty=py-cell*(.3+SIZES[p.size].scale*.75);
     ctx.fillStyle=p===sel?'#ffe36b':'rgba(12,16,54,.82)';ctx.fillRect(tx,ty-tf*.65,tw,tf*1.3);
     ctx.fillStyle=p===sel?'#0c1036':c;ctx.textAlign='left';ctx.fillText(label,tx+4,ty+1);
   }
@@ -469,27 +590,32 @@ $('#bPause').onclick=pause;
 $('#bSpeed').onclick=()=>{const k=Object.keys(SPEEDS);opt.speed=k[(k.indexOf(opt.speed)+1)%k.length];store.set('speed',opt.speed);setSpeedBtn()};
 function setVoice(v){voiceOn=v;store.set('voice',v?'1':'0');$('#bVoice').setAttribute('aria-pressed',v);if(!v){Q=[];try{speechSynthesis.cancel()}catch(e){}speaking=false}}
 $('#bVoice').onclick=()=>setVoice(!voiceOn);
-$('#bMenu').onclick=()=>{if(!G.demo&&!G.over&&G.handled+G.planes.length>0)msg('Shift abandoned.');menu()};
+$('#bLog').onclick=()=>setLog(!logOn);
+$('#bMenu').onclick=menu;
 
 /* ---------- menu ---------- */
 function menu(){
   Q=[];try{speechSynthesis.cancel()}catch(e){}speaking=false;
   reset(true);demoSeed();
-  const mapBtns=Object.entries(MAPS).map(([k,m])=>`<button class="opt" data-map="${k}" aria-pressed="${k===opt.map}"><b>${k}</b><span>${m.name}</span><i>${'★'.repeat(m.stars)}${'☆'.repeat(5-m.stars)}</i><span style="font-size:16px">${m.blurb}</span></button>`).join('');
-  const seg=(name,obj,cur)=>Object.keys(obj).map(k=>`<button class="opt" data-${name}="${k}" aria-pressed="${k===cur}"><b>${k}</b>${name==='diff'?`<span style="font-size:16px">${obj[k].label}</span>`:`<span style="font-size:16px">${k==='SLOW'?'Plenty of thinking time':k==='FAST'?'For quick reactions':'Original pace'}</span>`}</button>`).join('');
+  const tabs=REGIONS.map(r=>`<button class="tab" data-region="${r}" aria-pressed="${r===region}">${r}</button>`).join('');
+  const mapBtns=Object.entries(MAPS).filter(([,m])=>m.region===region).map(([k,m])=>`<button class="opt" data-map="${k}" aria-pressed="${k===opt.map}"><b>${k}</b><span>${m.name}</span><i>${'★'.repeat(m.stars)}${'☆'.repeat(5-m.stars)}</i><small>${m.blurb}</small></button>`).join('');
+  const sp={SLOW:'Plenty of thinking time',NORMAL:'Original pace',FAST:'For quick reactions'};
+  const seg=(name,obj,cur)=>Object.keys(obj).map(k=>`<button class="opt" data-${name}="${k}" aria-pressed="${k===cur}"><b>${k}</b><small>${name==='diff'?obj[k].label:sp[k]}</small></button>`).join('');
   $('#card').innerHTML=`<h1>KENNEDY APPROACH</h1><p class="sub">YOU ARE THE AIR TRAFFIC CONTROLLER</p><p class="by">GAME RECREATED BY MATHEW DOUGHTY</p>
-  <h3>CHOOSE YOUR AIRPORT</h3><div class="maps">${mapBtns}</div>
+  <h3>CHOOSE YOUR AIRPORT</h3><div class="tabs">${tabs}</div><div class="maps">${mapBtns}</div>
   <h3>DIFFICULTY</h3><div class="seg">${seg('diff',DIFF,opt.diff)}</div>
   <h3>SPEED</h3><div class="seg">${seg('speed',SPEEDS,opt.speed)}</div>
   <h3>HOW TO PLAY</h3>
   <ul>
     <li><b>Orange planes</b> are landing. Bring them down to <b>1</b> and fly them along a runway, either way.</li>
-    <li><b>White</b> and <b>blue</b> planes are passing through. Send them out of their <b>DEST</b> city at <b>5</b>.</li>
-    <li>Two planes at the <b>same height</b> must never get close.</li>
+    <li><b>White</b> and <b>blue</b> planes are passing through. Send them out of their <b>DEST</b> city at <b>5</b> (light aircraft at <b>3</b>).</li>
+    <li>Two planes at the <b>same height</b> must never get close. <b>Heavies</b> (the big four-engine jets) need an extra square of room. <b>Light</b> props are slow and fly low.</li>
     <li>Click a plane or press its letter, then <span class="key">←</span><span class="key">→</span> turn, <span class="key">↑</span><span class="key">↓</span> height, or click where it should go. <span class="key">SPACE</span> pauses.</li>
   </ul>
-  <div class="row"><button class="go" id="go">START SHIFT</button><label class="chk"><input type="checkbox" id="vchk" ${voiceOn?'checked':''}> Pilot voices</label></div>`;
+  <div class="row"><button class="go" id="go">START SHIFT</button><label class="chk"><input type="checkbox" id="vchk" ${voiceOn?'checked':''}> Pilot voices</label><label class="chk"><input type="checkbox" id="lchk" ${logOn?'checked':''}> Radio log</label></div>`;
   $('#card').onclick=e=>{
+    const tab=e.target.closest('.tab');
+    if(tab){region=tab.dataset.region;const first=Object.keys(MAPS).find(k=>MAPS[k].region===region);if(MAPS[opt.map].region!==region){opt.map=first;store.set('map',opt.map)}menu();return}
     const b=e.target.closest('.opt');if(!b)return;
     if(b.dataset.map){opt.map=b.dataset.map;store.set('map',opt.map);reset(true);demoSeed()}
     if(b.dataset.diff){opt.diff=b.dataset.diff;store.set('diff',opt.diff);reset(true);demoSeed()}
@@ -503,12 +629,16 @@ function menu(){
 function start(){
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume()}catch(e){}
   const vc=$('#vchk');if(vc)setVoice(vc.checked);
+  const lc=$('#lchk');if(lc)setLog(lc.checked);
   Q=[];speaking=false;try{speechSynthesis.cancel()}catch(e){}
   reset(false);$('#ov').hidden=true;$('#bPause').textContent='PAUSE';$('#bPause').setAttribute('aria-pressed',false);
+  $('#log').innerHTML='';
+  $('#freq').textContent=(118+Math.random()*18).toFixed(2);
+  logLine('sys',null,`${M.city} approach open. ${opt.diff}, ${D().strikes} strikes allowed.`,'sys');
   msg(`Welcome to ${M.city}. First plane is on its way. Click it or press its letter.`);
 }
 
-setVoice(voiceOn);setSpeedBtn();resize();menu();
+setVoice(voiceOn);setLog(logOn);setSpeedBtn();resize();menu();
 let last=performance.now(),lastUI=0;
 function frame(now){
   const dt=Math.min(.1,(now-last)/1000);last=now;
